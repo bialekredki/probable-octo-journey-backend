@@ -6,12 +6,24 @@ services:
     volumes:
       - ${PWD}:/app
     ports:
-      - 8000:8000
+      - 8080:8000
     networks:
       - internal
 
   redis:
     image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - internal
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - 8081:8081
     networks:
       - internal
 

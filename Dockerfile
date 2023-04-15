@@ -21,4 +21,4 @@ RUN poetry install --no-interaction --no-ansi
 
 COPY main.py .
 
-ENTRYPOINT [ "hypercorn", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "main:app" ]
+ENTRYPOINT [ "hypercorn", "--reload", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "main:app" ]
