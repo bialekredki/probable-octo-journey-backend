@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 
 from bson import ObjectId
@@ -36,6 +36,11 @@ class URL(BaseModel):
     time_to_live: NonNegativeInt | None = None
     creation_time: datetime = Field(default_factory=datetime.now)
     last_visit_time: datetime | None = Field(default=None)
+    last_modified_time: datetime | None = Field(default=None)
+
+    @property
+    def is_expired(self):
+        return self.time_to_live is not None and timedelta(hours=self.time_to_live) <= datetime.now() - self.creation_time
 
     class Config(ModelConfig):
         pass
