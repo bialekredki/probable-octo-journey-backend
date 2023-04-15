@@ -1,10 +1,12 @@
+from datetime import datetime
 from functools import partial
 
-from nanoid import generate
-from pydantic import AnyHttpUrl, Field, conint, constr, BaseModel, BaseConfig
 from bson import ObjectId
+from nanoid import generate
+from pydantic import AnyHttpUrl, BaseConfig, BaseModel, Field, NonNegativeInt
 
 from invisible.app import TypedApp
+from invisible.types import TinyURL
 
 
 class PyObjectId(ObjectId):
@@ -28,10 +30,12 @@ class ModelConfig(BaseConfig):
 
 class URL(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    tiny_url: constr(strip_whitespace=True, min_length=7, max_length=16)
+    tiny_url: TinyURL = Field(default_factory=partial(generate, size=16))
     url: AnyHttpUrl = Field(...)
-    max_redirects: conint(gt=0)
-    time_to_live: conint(gt=0)
+    max_redirects: NonNegativeInt | None = None
+    time_to_live: NonNegativeInt | None = None
+    creation_time: datetime = Field(default_factory=datetime.now)
+    last_visit_time: datetime | None = Field(default=None)
 
     class Config(ModelConfig):
         pass
