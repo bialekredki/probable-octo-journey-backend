@@ -44,6 +44,3 @@ class URL(BaseModel):
 
     class Config(ModelConfig):
         pass
-
-def bootstrap_store(app: TypedApp):
-    pass
