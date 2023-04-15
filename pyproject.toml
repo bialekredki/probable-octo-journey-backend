@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "invisible"
+version = "0.1.0"
+description = ""
+authors = ["oskar <oskarkorgul@gmail.com>"]
+readme = "README.md"
+packages = [{include = "invisible"}]
+
+
+[[tool.poetry.source]]
+name = "fastapi-cbv"
+url = "https://gitlab.com/api/v4/projects/43600871/packages/pypi/simple"
+default = false
+secondary = true
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi-cbv = "^0.3.0"
+hypercorn = "^0.14.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
