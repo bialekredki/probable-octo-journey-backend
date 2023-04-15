@@ -17,6 +17,8 @@ secondary = true
 python = "^3.10"
 fastapi-cbv = "^0.3.0"
 hypercorn = "^0.14.3"
+aioredis = "^2.0.1"
+nanoid = "^2.0.0"
 
 
 [build-system]

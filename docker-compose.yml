@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ${PWD}:/app
+    ports:
+      - 8000:8000
+    networks:
+      - internal
+
+  redis:
+    image: redis
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
