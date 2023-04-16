@@ -1,6 +1,7 @@
 import asyncio
 
 import pytest
+from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockDatabase
 
@@ -18,8 +19,14 @@ def event_loop():
 
 
 @pytest.fixture(scope="session", name="app")
-async def fixture_app(mock_redis):
-    yield initialize_application()
+async def fixture_app(mock_redis, mocked_producer):
+    app = initialize_application()
+    app.db_client = AsyncMongoMockClient()
+    app.database = app.db_client["test"]
+    app.producer = mocked_producer()
+
+    with TestClient(app):
+        yield app
 
 
 @pytest.fixture

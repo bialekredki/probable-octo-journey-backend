@@ -42,7 +42,7 @@ class AioRedisMock:
             res = None
         elif res:
             res.fetch_times += 1
-        return bytes(res.data, encoding="utf-8") if res else None
+        return res.data if res else None
 
     def clean(self):
         self.store = {}
