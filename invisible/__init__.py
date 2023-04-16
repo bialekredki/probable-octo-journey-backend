@@ -9,5 +9,8 @@ def initialize_application():
 
     @app.on_event("startup")
     async def _on_startup():
-        await app.database["tinyurl"].create_index([("tiny_url", ASCENDING), ("url", ASCENDING)])
+        await app.database["tinyurl"].create_index(
+            [("tiny_url", ASCENDING), ("url", ASCENDING)]
+        )
+
     return app

@@ -24,9 +24,11 @@ class PyObjectId(ObjectId):
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
 
+
 class ModelConfig(BaseConfig):
     arbitrary_types_allowed = True
-    json_encoders = {ObjectId: str}    
+    json_encoders = {ObjectId: str}
+
 
 class URL(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -40,7 +42,11 @@ class URL(BaseModel):
 
     @property
     def is_expired(self):
-        return self.time_to_live is not None and timedelta(hours=self.time_to_live) <= datetime.now() - self.creation_time
+        return (
+            self.time_to_live is not None
+            and timedelta(hours=self.time_to_live)
+            <= datetime.now() - self.creation_time
+        )
 
     class Config(ModelConfig):
         pass
