@@ -26,7 +26,8 @@ class Consumer:
     def declare_handler(self, handler: BaseHandler, topics: str | Iterable):
         topics = [topics] if isinstance(topics, str) else topics
         for topic in topics:
-            handler.make_declared(self)
+            if isinstance(handler, BaseHandler):
+                handler.make_declared(self)
             self.handlers.setdefault(topic, [])
             self.handlers[topic].insert(0, handler)
             self.logger.info("Registered handler %s for topic %s", handler, topic)
