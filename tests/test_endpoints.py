@@ -1,9 +1,11 @@
+import orjson
 import pytest
 from fastapi import status
 from httpx import AsyncClient
 
 from invisible.app import TypedApp
 from invisible.models import URL
+from invisible.messaging import _default_objectid
 from invisible.schemas import CreateTinyURL
 
 
@@ -41,6 +43,12 @@ async def test_create_endpoint(
     assert response_url.max_redirects == database_url.max_redirects == max_redirects
     assert response_url.time_to_live == database_url.time_to_live == ttl
 
+    assert len(app.producer.queue) == 1
+    assert app.producer.get() == (
+        "URL.create",
+        orjson.dumps(database_url.dict(), default=_default_objectid),
+    )
+
 
 @pytest.mark.parametrize(
     "ttl, max_redirects",
@@ -68,3 +76,5 @@ async def test_redirect_endpoint(
     assert response.status_code == status.HTTP_307_TEMPORARY_REDIRECT
     assert "location" in response.headers
     assert response.headers["location"] == test_url_model.url
+
+    assert len(app.producer.queue) == 1

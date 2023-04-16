@@ -37,6 +37,8 @@ async def test_url_is_cached_after_redirect(
 
     assert response.status_code == status.HTTP_307_TEMPORARY_REDIRECT
     assert app.redis.store[url.tiny_url].fetch_times == 0
+    assert len(app.producer.queue) == 1
+    assert app.producer.get()[0] == "URL.read"
 
 
 async def test_cache_is_refreshed_after_details(

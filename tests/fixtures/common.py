@@ -36,6 +36,7 @@ async def client(app: TypedApp):
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
     app.redis.clean()
+    app.producer.clean()
 
 
 @pytest.fixture

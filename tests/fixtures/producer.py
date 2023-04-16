@@ -1,20 +1,31 @@
+from collections import deque
 from unittest.mock import patch
 
+import orjson
 import pytest
 
 
 class MockKafkaProducer:
     def __init__(self) -> None:
-        pass
+        self.queue = deque()
 
-    async def send(self, *args, **kwargs):
-        pass
+    async def send(self, topic, value):
+        self.queue.append((topic, value))
+
+    def get(self, *, decode_value: bool = False):
+        topic, value = self.queue.popleft()
+        if decode_value:
+            value = orjson.loads(value)
+        return topic, value
 
     def __call__(self):
         return self
 
     async def start(self):
         pass
+
+    def clean(self):
+        self.queue.clear()
 
 
 @pytest.fixture(scope="session")
