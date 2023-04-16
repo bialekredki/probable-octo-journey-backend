@@ -13,6 +13,7 @@ def initialize_application():
             [("tiny_url", ASCENDING), ("url", ASCENDING)]
         )
         await app.database["host_metrics"].create_index([("host", TEXT)])
+        await app.database["path_metrics"].create_index([("url", TEXT)])
         app.producer = app.producer()
         await app.producer.start()
 
