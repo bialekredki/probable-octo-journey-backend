@@ -15,7 +15,7 @@ services:
 
   consumer:
     build: .
-    entrypoint: ["python", "invisible/consumers"]
+    entrypoint: ["watchexec", "-r", "-e", "py", "--", "python", "invisible/consumers"]
     volumes:
       - ${PWD}:/app
     networks:

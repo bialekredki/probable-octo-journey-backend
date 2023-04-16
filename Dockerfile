@@ -5,7 +5,11 @@ SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
 
 ENV PYTHON_UNBUFFERED=1
 ENV PATH=${PATH}:/root/.local/bin
+RUN  curl -fsSL https://apt.cli.rs/pubkey.asc | tee -a /usr/share/keyrings/rust-tools.asc
+RUN curl -fsSL https://apt.cli.rs/rust-tools.list | tee /etc/apt/sources.list.d/rust-tools.list
 
+RUN apt update && apt install -y watchexec-cli && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
