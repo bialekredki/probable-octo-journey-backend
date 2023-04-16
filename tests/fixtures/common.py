@@ -6,6 +6,7 @@ from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockDatabase
 
 from invisible import initialize_application
 from invisible.app import TypedApp
+from invisible.models import URL
 
 
 @pytest.fixture(scope="session")
@@ -33,3 +34,8 @@ async def client(app: TypedApp):
 @pytest.fixture
 def test_url():
     return "http://test.xyz"
+
+
+@pytest.fixture
+def test_url_model(test_url: str):
+    return URL(url=test_url)
