@@ -1,4 +1,5 @@
 from collections import deque
+from typing import Any
 from unittest.mock import patch
 
 import orjson
@@ -7,7 +8,7 @@ import pytest
 
 class MockKafkaProducer:
     def __init__(self) -> None:
-        self.queue = deque()
+        self.queue: deque[tuple[Any, Any]] = deque()
 
     async def send(self, topic, value):
         self.queue.append((topic, value))
