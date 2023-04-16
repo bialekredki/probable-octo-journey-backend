@@ -40,7 +40,7 @@ async def main():
     consumer.declare_middleware(LoggingMiddleware(logger))
 
     consumer.declare_handler(HandleLastVisitTime(), "URL.read")
-    consumer.declare_handler(HandleMetrics(), "URL.read")
+    consumer.declare_handler(HandleMetrics(), ("URL.read", "URL.create"))
 
     await consumer.run()
 

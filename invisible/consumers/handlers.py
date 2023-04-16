@@ -55,14 +55,21 @@ class HandleMetrics(BaseHandler):
                 path_metrics_collection.find_one({"url": url.url}),
             ]
         )
+        redirects_number = 1 if record.topic.endswith("read") else 0
+        incremented_fields = (
+            {"redirects"} if record.topic.endswith("read") else {"tiny_urls"}
+        )
+        tiny_urls = 0 if record.topic.endswith("read") else 1
         path_metrics = (
-            Path(**path_metrics) if path_metrics else Path(url=url.url, redirects=1)
+            Path(**path_metrics)
+            if path_metrics
+            else Path(url=url.url, redirects=redirects_number, tiny_urls=tiny_urls)
         )
         r = await path_metrics_collection.find_one_and_update(
             {"url": path_metrics.url},
             {
-                "$set": path_metrics.dict(exclude={"redirects"}),
-                "$inc": {"redirects": 1},
+                "$set": path_metrics.dict(exclude=incremented_fields),
+                "$inc": {inc_field: 1 for inc_field in incremented_fields},
             },
             upsert=True,
             return_document=ReturnDocument.AFTER,
@@ -70,9 +77,24 @@ class HandleMetrics(BaseHandler):
         host_metrics = (
             Host(**host_metrics)
             if host_metrics
-            else Host(paths_ids=[r["_id"]], host=url.url.host, total_redirects=1)
+            else Host(
+                pathsids=[],
+                host=url.url.host,
+                total_redirects=redirects_number,
+                tiny_urls=tiny_urls,
+            )
         )
-
+        host_metrics.paths_ids.append(r["_id"])
+        incremented_fields = (
+            {"total_redirects"}
+            if record.topic.endswith("read")
+            else {"total_tiny_urls"}
+        )
         await host_metrics_collection.find_one_and_update(
-            {"host": host_metrics.host}, {"$set": host_metrics.dict()}, upsert=True
+            {"host": host_metrics.host},
+            {
+                "$set": host_metrics.dict(exclude=incremented_fields),
+                "$inc": {inc_field: 1 for inc_field in incremented_fields},
+            },
+            upsert=True,
         )

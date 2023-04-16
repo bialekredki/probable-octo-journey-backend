@@ -48,7 +48,9 @@ class URLShortenerView:
         url = await request.app.database["tinyurl"].find_one(
             {"_id": result.inserted_id}
         )
-        return URL(**url)
+        url = URL(**url)
+        background_tasks.add_task(send_message, request.app.producer, "create", url)
+        return url
 
     @endpoint(methods=["GET"], path="{tiny_url}", response_class=RedirectResponse)
     async def get(
@@ -71,7 +73,7 @@ class URLShortenerView:
                 send_message,
                 request.app.producer,
                 "read",
-                URL(url=url, max_redirects=max_redirects),
+                URL(url=url, max_redirects=max_redirects, tiny_url=tiny_url),
             )
             return RedirectResponse(url=url)
         url = await request.app.database["tinyurl"].find_one({"tiny_url": tiny_url})
