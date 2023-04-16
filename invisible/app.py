@@ -1,6 +1,9 @@
+import asyncio
 import logging
+from functools import partial
 
 import aioredis
+from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
 from fastapi.requests import Request
 from motor.core import AgnosticClient, Database
@@ -22,6 +25,10 @@ class TypedApp(FastAPI):
         self.db_client = AsyncIOMotorClient(self.config.mongo_dsn)
         self.database = self.db_client["test"]
         self.redis = aioredis.from_url(self.config.redis_dsn)
+        self.producer = partial(
+            AIOKafkaProducer,
+            bootstrap_servers=f"{self.config.kafka_dsn.host}:{self.config.kafka_dsn.port}",
+        )
 
 
 class TypedRequest(Request):

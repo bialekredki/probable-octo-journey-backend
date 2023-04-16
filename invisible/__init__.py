@@ -12,5 +12,7 @@ def initialize_application():
         await app.database["tinyurl"].create_index(
             [("tiny_url", ASCENDING), ("url", ASCENDING)]
         )
+        app.producer = app.producer()
+        await app.producer.start()
 
     return app
