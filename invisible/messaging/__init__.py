@@ -1,6 +1,6 @@
 import orjson
-from bson import ObjectId
 from aiokafka import AIOKafkaProducer
+from bson import ObjectId
 from pydantic import BaseModel
 
 

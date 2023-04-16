@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, AnyHttpUrl, NonNegativeInt
+from pydantic import AnyHttpUrl, BaseModel, Field, NonNegativeInt
 
 
 class CreateTinyURL(BaseModel):

@@ -1,8 +1,8 @@
 import asyncio
 import logging
 from abc import ABC, abstractmethod
-from typing import Any
 from datetime import datetime
+from typing import Any
 
 from motor.core import Collection
 from pymongo.collection import ReturnDocument

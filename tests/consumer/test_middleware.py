@@ -1,12 +1,8 @@
 import logging
 
 from invisible.consumers import Consumer
-from invisible.consumers.middleware import (
-    BaseMiddleware,
-    Generator,
-    RecordT,
-    ParsedRecord,
-)
+from invisible.consumers.middleware import (BaseMiddleware, Generator,
+                                            ParsedRecord, RecordT)
 
 
 class CountingMiddleware(BaseMiddleware):

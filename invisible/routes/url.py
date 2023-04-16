@@ -8,10 +8,10 @@ from fastapi_cbv.view import view
 from pymongo.results import InsertOneResult
 
 from invisible.app import TypedApp, TypedRequest
+from invisible.messaging import send_message
 from invisible.models import URL
 from invisible.schemas import CreateTinyURL
 from invisible.types import TinyURL
-from invisible.messaging import send_message
 
 router = APIRouter(prefix="/url", tags=["URLs"])
 

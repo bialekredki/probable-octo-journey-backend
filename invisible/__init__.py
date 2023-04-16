@@ -1,6 +1,7 @@
+from pymongo import ASCENDING, TEXT
+
 from invisible.app import TypedApp
 from invisible.routes import bootstrap_routers
-from pymongo import ASCENDING, TEXT
 
 
 def initialize_application():

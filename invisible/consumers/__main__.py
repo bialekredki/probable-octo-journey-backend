@@ -9,12 +9,10 @@ from nanoid import generate
 
 from invisible.config import configuration
 from invisible.consumers import Consumer
-from invisible.consumers.middleware import (
-    ExceptionMiddleware,
-    LoggingMiddleware,
-    OrJSONMiddleware,
-)
 from invisible.consumers.handlers import HandleLastVisitTime, HandleMetrics
+from invisible.consumers.middleware import (ExceptionMiddleware,
+                                            LoggingMiddleware,
+                                            OrJSONMiddleware)
 
 
 async def main():

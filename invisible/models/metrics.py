@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, NonNegativeInt, PositiveInt, constr, AnyHttpUrl
+from pydantic import (AnyHttpUrl, BaseModel, Field, NonNegativeInt,
+                      PositiveInt, constr)
 
-from invisible.models import PyObjectId, ModelConfig
+from invisible.models import ModelConfig, PyObjectId
 
 
 class Path(BaseModel):

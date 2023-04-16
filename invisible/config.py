@@ -1,4 +1,4 @@
-from pydantic import BaseSettings, RedisDsn, MongoDsn, PositiveInt, KafkaDsn
+from pydantic import BaseSettings, KafkaDsn, MongoDsn, PositiveInt, RedisDsn
 
 
 class Configuration(BaseSettings):

@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Any, Callable, Generator, Coroutine
-from aiokafka import ConsumerRecord
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Callable, Coroutine, Generator
+
 import orjson
+from aiokafka import ConsumerRecord
 
 from invisible.consumers.utils import ParsedRecord, RecordT
 
