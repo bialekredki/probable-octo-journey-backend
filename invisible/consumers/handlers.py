@@ -69,10 +69,14 @@ class HandleMetrics(BaseHandler):
             if path_metrics
             else Path(url=url.url, redirects=redirects_number, tiny_urls=tiny_urls)
         )
+        fields_to_set = path_metrics.dict(
+            exclude=incremented_fields | {"id", "path"},
+        )
+        fields_to_set.update({"search": path_metrics.url})
         r = await path_metrics_collection.find_one_and_update(
             {"url": path_metrics.url},
             {
-                "$set": path_metrics.dict(exclude=incremented_fields),
+                "$set": fields_to_set,
                 "$inc": {inc_field: 1 for inc_field in incremented_fields},
             },
             upsert=True,
@@ -94,10 +98,14 @@ class HandleMetrics(BaseHandler):
             if record.topic.endswith("read")
             else {"total_tiny_urls"}
         )
+        fields_to_set = host_metrics.dict(
+            exclude=incremented_fields | {"id", "path"},
+        )
+        fields_to_set.update({"search": host_metrics.host})
         await host_metrics_collection.find_one_and_update(
             {"host": host_metrics.host},
             {
-                "$set": host_metrics.dict(exclude=incremented_fields),
+                "$set": fields_to_set,
                 "$inc": {inc_field: 1 for inc_field in incremented_fields},
             },
             upsert=True,

@@ -1,6 +1,8 @@
 import logging
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Coroutine, Generator
+import time
+from enum import Enum, auto
 
 import orjson
 from aiokafka import ConsumerRecord
@@ -53,4 +55,32 @@ class OrJSONMiddleware(BaseMiddleware):
                 value=orjson.loads(record.value),
             ),
             stack,
+        )
+
+
+class TimingMiddleware(LoggingMiddleware):
+    class Unit(Enum):
+        NANOSECONDS = auto()
+        SECONDS = auto()
+
+    def __init__(self, logger: logging.Logger, unit: Unit = Unit.SECONDS) -> None:
+        super().__init__(logger)
+        self.unit = unit
+
+    @property
+    def unit_string(self):
+        return "ns" if self.unit is self.Unit.NANOSECONDS else "s"
+
+    def measure_time(self):
+        return time.time_ns() if self.unit is self.Unit.NANOSECONDS else time.time()
+
+    async def __call__(self, record: RecordT, stack: Generator) -> Any:
+        start = self.measure_time()
+        await next(stack)(record, stack)
+        measured_time = self.measure_time() - start
+        self.logger.info(
+            "Processing event on topic %s took %s %s",
+            record.topic,
+            measured_time,
+            self.unit_string,
         )
