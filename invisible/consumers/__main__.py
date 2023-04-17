@@ -10,9 +10,12 @@ from nanoid import generate
 from invisible.config import configuration
 from invisible.consumers import Consumer
 from invisible.consumers.handlers import HandleLastVisitTime, HandleMetrics
-from invisible.consumers.middleware import (ExceptionMiddleware,
-                                            LoggingMiddleware,
-                                            OrJSONMiddleware)
+from invisible.consumers.middleware import (
+    ExceptionMiddleware,
+    LoggingMiddleware,
+    OrJSONMiddleware,
+    TimingMiddleware,
+)
 
 
 async def main():
@@ -35,6 +38,7 @@ async def main():
 
     consumer.declare_middleware(OrJSONMiddleware())
     consumer.declare_middleware(ExceptionMiddleware(logger))
+    consumer.declare_middleware(TimingMiddleware(logger))
     consumer.declare_middleware(LoggingMiddleware(logger))
 
     consumer.declare_handler(HandleLastVisitTime(), "URL.read")
