@@ -5,6 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi_cbv.endpoint import endpoint
 from fastapi_cbv.view import view
+from pydantic import conlist
 from pymongo.results import InsertOneResult
 
 from invisible.app import TypedApp, TypedRequest
@@ -31,7 +32,7 @@ async def remove_from_cache(app: TypedApp, tiny_url: str):
 
 
 @view(router)
-class URLShortenerView:
+class TinyUrlView:
     async def post(
         self,
         request: TypedRequest,
@@ -51,6 +52,24 @@ class URLShortenerView:
         url = URL(**url)
         background_tasks.add_task(send_message, request.app.producer, "create", url)
         return url
+
+    @endpoint(methods=["POST"], path="bulk")
+    async def bulk_create(
+        self,
+        request: TypedRequest,
+        background_tasks: BackgroundTasks,
+        data: conlist(CreateTinyURL, min_items=1, max_items=2**32),
+    ):
+        urls = []
+        for _url in data:
+            url = URL(**_url.dict())
+            background_tasks.add_task(
+                update_cache, request.app, url.tiny_url, url.url, url.max_redirects
+            )
+            background_tasks.add_task(send_message, request.app.producer, "create", url)
+            urls.append(url.dict())
+        await request.app.database["tinyurl"].insert_many(urls, ordered=False)
+        return None
 
     @endpoint(methods=["GET"], path="{tiny_url}", response_class=RedirectResponse)
     async def get(
