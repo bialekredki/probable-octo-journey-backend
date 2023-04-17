@@ -12,7 +12,7 @@ async def test_cache_is_refreshed_after_insert(
 ):
     response = await client.post("/url/", json=CreateTinyURL(url=test_url).dict())
     url = URL(**response.json())
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     data = orjson.loads((await app.redis.get(url.tiny_url)))
     assert data[0] == url.url
 

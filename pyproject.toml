@@ -15,7 +15,7 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi-cbv = "^0.3.0"
+fastapi-cbv = "^0.4.0"
 hypercorn = "^0.14.3"
 aioredis = "^2.0.1"
 nanoid = "^2.0.0"
@@ -35,6 +35,7 @@ httpx = "^0.24.0"
 mongomock-motor = "^0.0.18"
 faker = "^18.4.0"
 coverage = "^7.2.3"
+pytest-timeout = "^2.1.0"
 
 [tool.pytest.ini_options]
 asyncio_mode= "auto"

@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi_cbv.endpoint import endpoint
 from fastapi_cbv.view import view
 from pydantic import conlist
-from pymongo.results import InsertOneResult
+from pymongo.results import InsertOneResult, InsertManyResult
 
 from invisible.app import TypedApp, TypedRequest
 from invisible.messaging import send_message
@@ -33,6 +33,7 @@ async def remove_from_cache(app: TypedApp, tiny_url: str):
 
 @view(router)
 class TinyUrlView:
+    @endpoint(methods=["POST"], status_code=status.HTTP_201_CREATED)
     async def post(
         self,
         request: TypedRequest,
@@ -53,12 +54,12 @@ class TinyUrlView:
         background_tasks.add_task(send_message, request.app.producer, "create", url)
         return url
 
-    @endpoint(methods=["POST"], path="bulk")
+    @endpoint(methods=["POST"], path="bulk", status_code=status.HTTP_201_CREATED)
     async def bulk_create(
         self,
         request: TypedRequest,
         background_tasks: BackgroundTasks,
-        data: conlist(CreateTinyURL, min_items=1, max_items=2**32),
+        data: conlist(CreateTinyURL, min_items=1, max_items=2**12),
     ):
         urls = []
         for _url in data:
@@ -68,8 +69,15 @@ class TinyUrlView:
             )
             background_tasks.add_task(send_message, request.app.producer, "create", url)
             urls.append(url.dict())
-        await request.app.database["tinyurl"].insert_many(urls, ordered=False)
-        return None
+        r: InsertManyResult = await request.app.database["tinyurl"].insert_many(
+            urls, ordered=False
+        )
+        r = (
+            await request.app.database["tinyurl"]
+            .find({"_id": {"$in": [_ for _ in r.inserted_ids]}})
+            .to_list(length=2**12)
+        )
+        return [URL(**_) for _ in r]
 
     @endpoint(methods=["GET"], path="{tiny_url}", response_class=RedirectResponse)
     async def get(

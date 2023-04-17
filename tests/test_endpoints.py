@@ -34,7 +34,7 @@ async def test_create_endpoint(
     response_url = URL(**response.json())
     res = await app.database["tinyurl"].find_one({"_id": response_url.id})
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     assert res is not None
 
     database_url = URL(**res)
@@ -78,3 +78,24 @@ async def test_redirect_endpoint(
     assert response.headers["location"] == test_url_model.url
 
     assert len(app.producer.queue) == 1
+
+
+@pytest.mark.parametrize("size", (2**_ for _ in range(12)))
+@pytest.mark.timeout(5)
+async def test_bulk_create(client: AsyncClient, app: TypedApp, size: int, faker):
+    response = await client.post(
+        "/url/bulk", json=[CreateTinyURL(url=faker.url()).dict() for _ in range(size)]
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert len(app.producer.queue) == size
+    data = response.json()
+    print(data)
+    print([d["tiny_url"] for d in data])
+    r = app.database["tinyurl"].find(
+        {"tinyurl": {"$in": [d["tiny_url"] for d in data]}}, ["tiny_url", "url"]
+    )
+    print(await r.to_list(length=100))
+    async for res in r:
+        print(res)
+    assert False

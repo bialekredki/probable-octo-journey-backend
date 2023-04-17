@@ -204,7 +204,7 @@ test = ["anyio[trio] (>=3.2.1,<4.0.0)", "black (==22.10.0)", "coverage[toml] (>=
 
 [[package]]
 name = "fastapi-cbv"
-version = "0.3.0"
+version = "0.4.0"
 description = "Class based view for FastAPI services."
 category = "main"
 optional = false
@@ -538,6 +538,17 @@ docs = ["sphinx (>=5.3)", "sphinx-rtd-theme (>=1.0)"]
 testing = ["coverage (>=6.2)", "flaky (>=3.5.0)", "hypothesis (>=5.7.1)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
 
 [[package]]
+name = "pytest-timeout"
+version = "2.1.0"
+description = "pytest plugin to abort hanging tests"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pytest = ">=5.0.0"
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -647,7 +658,7 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "8d28d0ec66f70cf9ddd952ee88aaac062d0cd69b3a5f226bcfe87243024d9729"
+content-hash = "c80e2e0c7600d52c913802e653e60b32fd41a178836c7e60064cdfb24fa4d643"
 
 [metadata.files]
 aiokafka = [
@@ -812,8 +823,8 @@ fastapi = [
     {file = "fastapi-0.92.0.tar.gz", hash = "sha256:023a0f5bd2c8b2609014d3bba1e14a1d7df96c6abea0a73070621c9862b9a4de"},
 ]
 fastapi-cbv = [
-    {file = "fastapi_cbv-0.3.0-py3-none-any.whl", hash = "sha256:59fa319de1da75d6c80277b10dbc5f7502f829c65c1af7cbb861363d52d67a0b"},
-    {file = "fastapi_cbv-0.3.0.tar.gz", hash = "sha256:fd87bd628b7f0b780935933323760418fc773add0430d55103ed800cc907ccb1"},
+    {file = "fastapi_cbv-0.4.0-py3-none-any.whl", hash = "sha256:13cd2b56ce227128685bd66fc51bf8b896c035bc9c8f39917f3c83bf35b22c8e"},
+    {file = "fastapi_cbv-0.4.0.tar.gz", hash = "sha256:56ce7e0d6ed9ffca7837b7b3b4c9ab4e31a3acc8a425b7769da9e3682c49e921"},
 ]
 h11 = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
@@ -1078,6 +1089,10 @@ pytest = [
 pytest-asyncio = [
     {file = "pytest-asyncio-0.21.0.tar.gz", hash = "sha256:2b38a496aef56f56b0e87557ec313e11e1ab9276fc3863f6a7be0f1d0e415e1b"},
     {file = "pytest_asyncio-0.21.0-py3-none-any.whl", hash = "sha256:f2b3366b7cd501a4056858bd39349d5af19742aed2d81660b7998b6341c7eb9c"},
+]
+pytest-timeout = [
+    {file = "pytest-timeout-2.1.0.tar.gz", hash = "sha256:c07ca07404c612f8abbe22294b23c368e2e5104b521c1790195561f37e1ac3d9"},
+    {file = "pytest_timeout-2.1.0-py3-none-any.whl", hash = "sha256:f6f50101443ce70ad325ceb4473c4255e9d74e3c7cd0ef827309dfa4c0d975c6"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
