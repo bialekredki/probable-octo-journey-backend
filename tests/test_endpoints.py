@@ -90,12 +90,8 @@ async def test_bulk_create(client: AsyncClient, app: TypedApp, size: int, faker)
     assert response.status_code == status.HTTP_201_CREATED
     assert len(app.producer.queue) == size
     data = response.json()
-    print(data)
-    print([d["tiny_url"] for d in data])
     r = app.database["tinyurl"].find(
-        {"tinyurl": {"$in": [d["tiny_url"] for d in data]}}, ["tiny_url", "url"]
+        {"tiny_url": {"$in": [d["tiny_url"] for d in data]}}, ["tiny_url", "url"]
     )
-    print(await r.to_list(length=100))
-    async for res in r:
-        print(res)
-    assert False
+    r = await r.to_list(length=100)
+    assert len(r) == len(data)
