@@ -52,10 +52,11 @@ class HandleMetrics(BaseHandler):
         path_metrics_collection: Collection = self.services["path_metrics_collection"]
 
         url = URL(**record.value)
+        host_url = url.url.host.replace("www.", "")
 
         host_metrics, path_metrics = await asyncio.gather(
             *[
-                host_metrics_collection.find_one({"host": url.url.host}),
+                host_metrics_collection.find_one({"host": host_url}),
                 path_metrics_collection.find_one({"url": url.url}),
             ]
         )
@@ -87,7 +88,7 @@ class HandleMetrics(BaseHandler):
             if host_metrics
             else Host(
                 paths_ids=[],
-                host=url.url.host,
+                host=host_url,
                 total_redirects=redirects_number,
                 tiny_urls=tiny_urls,
             )
