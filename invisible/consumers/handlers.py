@@ -47,6 +47,7 @@ class HandleLastVisitTime(BaseHandler):
 
 class HandleMetrics(BaseHandler):
     async def __call__(self, record: RecordT) -> Any:
+        # TODO: Refactor this handler
         host_metrics_collection: Collection = self.services["host_metrics_collection"]
         path_metrics_collection: Collection = self.services["path_metrics_collection"]
 
