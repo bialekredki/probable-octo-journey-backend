@@ -37,13 +37,12 @@ class HandleLastVisitTime(BaseHandler):
         url = URL(**url)
         record_datetime = datetime.fromtimestamp(record.timestamp / 1000)
         if url.last_visit_time is None or record_datetime > url.last_visit_time:
-            await tiny_url_collection.update_one(
-                {"_id": url.id},
-                {
-                    "$set": {"last_visit_time": record_datetime},
-                    "$inc": {"max_redirects": -1},
-                },
-            )
+            update_fields = {
+                "$set": {"last_visit_time": record_datetime},
+            }
+            if url.max_redirects is not None and url.max_redirects >= 1:
+                update_fields["$inc"] = {"max_redirects": -1}
+            await tiny_url_collection.update_one({"_id": url.id}, update_fields)
 
 
 class HandleMetrics(BaseHandler):
