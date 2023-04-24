@@ -207,3 +207,45 @@ async def test_metrics_handler__metric_created_for_another_path(
 
     assert path_metrics.tiny_urls == 1
     assert path_metrics.redirects == 0
+
+
+async def test_metrics_handler__update_metrics(
+    handler_metrics,
+    host_metrics_collection,
+    path_metrics_collection,
+    test_url_model: URL,
+):
+    path_metrics = Path(url=test_url_model.url)
+    host_metrics = Host(
+        host=test_url_model.url.host,
+        total_tiny_urls=1,
+        paths_ids=[path_metrics.id],
+    )
+
+    await asyncio.gather(
+        *(
+            host_metrics_collection.insert_one(host_metrics.dict()),
+            path_metrics_collection.insert_one(path_metrics.dict()),
+        )
+    )
+
+    await emit_message(test_url_model, handler_metrics, "read")
+
+    host_metrics, path_metrics = await asyncio.gather(
+        *(
+            host_metrics_collection.find_one({}),
+            path_metrics_collection.find_one({"url": test_url_model.url}),
+        )
+    )
+    host_metrics, path_metrics = Host(**host_metrics), Path(**path_metrics)
+
+    assert host_metrics.host == test_url_model.url.host
+    assert path_metrics.url == test_url_model.url
+    assert len(host_metrics.paths_ids) == 2
+    assert path_metrics.id in host_metrics.paths_ids
+
+    assert host_metrics.total_tiny_urls == 1
+    assert host_metrics.total_redirects == 1
+
+    assert path_metrics.tiny_urls == 1
+    assert path_metrics.redirects == 1
