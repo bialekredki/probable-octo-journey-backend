@@ -1,3 +1,3 @@
-from invisible import initialize_application
+from app import initialize_application
 
 app = initialize_application()

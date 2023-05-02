@@ -4,11 +4,11 @@ import pytest
 from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockCollection
 from pydantic import BaseModel
 
-from invisible.consumers.handlers import BaseHandler, HandleLastVisitTime, HandleMetrics
-from invisible.consumers.utils import ParsedRecord
-from invisible.messaging import send_message
-from invisible.models import URL
-from invisible.models.metrics import Path, Host
+from app.consumers.handlers import BaseHandler, HandleLastVisitTime, HandleMetrics
+from app.consumers.utils import ParsedRecord
+from app.messaging import send_message
+from app.models import URL
+from app.models.metrics import Path, Host
 from tests.fixtures.producer import MockKafkaProducer
 
 

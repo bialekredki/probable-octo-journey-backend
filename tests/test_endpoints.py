@@ -3,10 +3,10 @@ import pytest
 from fastapi import status
 from httpx import AsyncClient
 
-from invisible.app import TypedApp
-from invisible.models import URL
-from invisible.messaging import _default_objectid
-from invisible.schemas import CreateTinyURL
+from app.app import TypedApp
+from app.models import URL
+from app.messaging import _default_objectid
+from app.schemas import CreateTinyURL
 
 
 @pytest.mark.parametrize(
