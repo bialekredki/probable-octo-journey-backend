@@ -7,10 +7,10 @@ from motor.core import Database
 from motor.motor_asyncio import AsyncIOMotorClient
 from nanoid import generate
 
-from invisible.config import configuration
-from invisible.consumers import Consumer
-from invisible.consumers.handlers import HandleLastVisitTime, HandleMetrics
-from invisible.consumers.middleware import (
+from app.config import configuration
+from app.consumers import Consumer
+from app.consumers.handlers import HandleLastVisitTime, HandleMetrics
+from app.consumers.middleware import (
     ExceptionMiddleware,
     LoggingMiddleware,
     OrJSONMiddleware,

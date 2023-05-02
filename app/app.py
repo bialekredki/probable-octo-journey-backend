@@ -9,7 +9,7 @@ from fastapi.requests import Request
 from motor.core import AgnosticClient, Database
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from invisible.config import configuration
+from app.config import configuration
 
 
 class TypedApp(FastAPI):

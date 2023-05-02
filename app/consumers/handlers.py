@@ -7,9 +7,9 @@ from typing import Any
 from motor.core import Collection
 from pymongo.collection import ReturnDocument
 
-from invisible.consumers.utils import RecordT
-from invisible.models import URL
-from invisible.models.metrics import Host, Path
+from app.consumers.utils import RecordT
+from app.models import URL
+from app.models.metrics import Host, Path
 
 
 class BaseHandler(ABC):

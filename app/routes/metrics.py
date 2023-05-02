@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
 from pydantic import constr
 
-from invisible.app import TypedRequest
-from invisible.models.metrics import Host
+from app.app import TypedRequest
+from app.models.metrics import Host
 
 router = APIRouter(prefix="/metrics", tags=["Metrics"])
 

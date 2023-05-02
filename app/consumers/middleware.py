@@ -7,7 +7,7 @@ from enum import Enum, auto
 import orjson
 from aiokafka import ConsumerRecord
 
-from invisible.consumers.utils import ParsedRecord, RecordT
+from app.consumers.utils import ParsedRecord, RecordT
 
 
 class BaseMiddleware(ABC):
