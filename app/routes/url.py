@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import orjson
-from fastapi import APIRouter, BackgroundTasks, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status, Header
 from fastapi.responses import RedirectResponse
 from fastapi_cbv.endpoint import endpoint
 from fastapi_cbv.view import view
@@ -85,6 +85,7 @@ class TinyUrlView:
         request: TypedRequest,
         background_tasks: BackgroundTasks,
         tiny_url: TinyURL,
+        user_agent: str | None = Header(default=None),
     ):
         url = await request.app.redis.get(tiny_url)
         if url:
@@ -101,6 +102,10 @@ class TinyUrlView:
                 request.app.producer,
                 "read",
                 URL(url=url, max_redirects=max_redirects, tiny_url=tiny_url),
+                additional_data={
+                    "user_agent": user_agent,
+                    "ip_address": request.client.host,
+                },
             )
             return RedirectResponse(url=url)
         url = await request.app.database["tinyurl"].find_one({"tiny_url": tiny_url})

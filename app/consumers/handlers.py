@@ -3,6 +3,10 @@ import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any
+from clickhouse_connect.driver import Client
+from geoip2.database import Reader
+from geoip2.errors import AddressNotFoundError
+from user_agents import parse
 
 from motor.core import Collection
 from pymongo.collection import ReturnDocument
@@ -10,6 +14,9 @@ from pymongo.collection import ReturnDocument
 from app.consumers.utils import RecordT
 from app.models import URL
 from app.models.metrics import Host, Path
+
+
+PRIVATE_IP_ADDRESS = "192.168.1.1"
 
 
 class BaseHandler(ABC):
@@ -43,6 +50,65 @@ class HandleLastVisitTime(BaseHandler):
             if url.max_redirects is not None and url.max_redirects >= 1:
                 update_fields["$inc"] = {"max_redirects": -1}
             await tiny_url_collection.update_one({"_id": url.id}, update_fields)
+
+
+class HandleAnalytics(BaseHandler):
+    async def __call__(self, record: RecordT) -> Any:
+        client: Client = self.services["clickhouse_client"]
+        ip_reader: Reader = self.services["ip_reader"]
+
+        url = URL(**record.value)
+        try:
+            location = ip_reader.country(
+                record.value.get("ip_address", PRIVATE_IP_ADDRESS) or PRIVATE_IP_ADDRESS
+            ).country.iso_code
+        except AddressNotFoundError:
+            location = "Unknown"
+        if "user_agent" in record.value and record.value.get("user_agent"):
+            user_agent = parse(record.value["user_agent"])
+
+        try:
+            device = user_agent.device.family
+            browser = f"{user_agent.os.family} {user_agent.os.version_string}"
+            operating_system = (
+                f"{user_agent.browser.family} {user_agent.browser.version_string}"
+            )
+            is_mobile = user_agent.is_mobile
+            is_bot = user_agent.is_bot
+        except UnboundLocalError:
+            device, browser, operating_system = ("Unknown",) * 3
+            is_mobile, is_bot = (False,) * 2
+        client.insert(
+            "analytics",
+            [
+                (
+                    url.url.host,
+                    str(url.url),
+                    url.tiny_url,
+                    datetime.fromtimestamp(record.timestamp / 1000),
+                    record.value.get("ip_address"),
+                    location,
+                    device,
+                    operating_system,
+                    browser,
+                    is_mobile,
+                    is_bot,
+                )
+            ],
+            (
+                "host",
+                "path",
+                "tiny_url",
+                "timestamp",
+                "ip_address",
+                "location",
+                "device",
+                "operating_system",
+                "browser",
+                "is_mobile",
+                "is_bot",
+            ),
+        )
 
 
 class HandleMetrics(BaseHandler):

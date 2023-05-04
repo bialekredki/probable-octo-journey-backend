@@ -19,7 +19,7 @@ RUN poetry config virtualenvs.create false && poetry install --no-root --no-ansi
 
 COPY README.md ./
 
-COPY invisible /app/invisible
+COPY app /app/app
 
 RUN poetry install --no-interaction --no-ansi
 
