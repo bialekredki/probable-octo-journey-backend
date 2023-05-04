@@ -1,4 +1,4 @@
-from pymongo import ASCENDING, TEXT, HASHED
+from pymongo import ASCENDING, TEXT
 from pymongo.collation import (
     Collation,
     CollationAlternate,
