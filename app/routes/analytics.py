@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from typing import Iterable
+
+from fastapi import APIRouter, Depends
 from fastapi_cbv import endpoint, view
 
 from app.app import TypedRequest
-from typing import Iterable
-from app.schemas.analytics import AnalyticsStatsItem
+from app.schemas.analytics import AnalyticsStatsItem, AnalyticsStatsRequest
 
 router = APIRouter(prefix="/analytics", tags=["Metrics", "Analytics"])
 
@@ -12,19 +13,24 @@ router = APIRouter(prefix="/analytics", tags=["Metrics", "Analytics"])
 class TinyUrlAnalyticsView:
     @endpoint(
         methods=["GET"],
-        name="stats",
+        name="TinyURL stats",
         path="/stats",
-        response_model=AnalyticsStatsItem,
+        response_model=list[AnalyticsStatsItem],
     )
-    async def stats(self, tiny_url_id: str, request: TypedRequest):
+    async def stats(self, tiny_url_id: str, request: TypedRequest, params: AnalyticsStatsRequest = Depends()):
+        params = params.dict()
+        params["tiny_url_id"] = tiny_url_id
         r = request.app.clickhouse_client.query(
             """
                 SELECT count(*) as visits, toDate(timestamp) as day, uniqCombined((device, operating_system, browser, ip_address)) as unique_visits 
                 FROM analytics 
                 WHERE tiny_url = {tiny_url_id:String} 
+                    AND day >= {start_date: DateTime}
+                    AND day <= {end_date: DateTime}
                 GROUP BY day
                 ORDER BY day
             """,
-            parameters={"tiny_url_id": tiny_url_id},
+            parameters=params,
         )
         return list(r.named_results())
+
