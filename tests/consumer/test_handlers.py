@@ -1,24 +1,52 @@
-from datetime import datetime, timedelta
 import asyncio
+from datetime import datetime, timedelta
+from typing import Any
+from unittest.mock import MagicMock
+
 import pytest
 from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockCollection
 from pydantic import BaseModel
 
-from invisible.consumers.handlers import BaseHandler, HandleLastVisitTime, HandleMetrics
-from invisible.consumers.utils import ParsedRecord
-from invisible.messaging import send_message
-from invisible.models import URL
-from invisible.models.metrics import Path, Host
+from app.consumers.handlers import (
+    BaseHandler,
+    HandleAnalytics,
+    HandleLastVisitTime,
+    HandleMetrics,
+)
+from app.consumers.utils import ParsedRecord
+from app.messaging import send_message
+from app.models import URL
+from app.models.metrics import Host, Path
 from tests.fixtures.producer import MockKafkaProducer
 
 
+ANALYTICS_COLUMNS = (
+    "host",
+    "path",
+    "tiny_url",
+    "timestamp",
+    "ip_address",
+    "location",
+    "device",
+    "operating_system",
+    "browser",
+    "is_mobile",
+    "is_bot",
+)
+
+
 async def emit_message(
-    data: BaseModel, handler: BaseHandler, action: str, dt: datetime | None = None
+    data: BaseModel,
+    handler: BaseHandler,
+    action: str,
+    dt: datetime | None = None,
+    *,
+    additional_data: dict[str, Any] | None = None
 ):
     dt = dt or datetime.now()
     timestamp = dt.timestamp() * 1000
     producer = MockKafkaProducer()
-    await send_message(producer, action, data)
+    await send_message(producer, action, data, additional_data=additional_data)
     topic, value = producer.get(decode_value=True)
     record = ParsedRecord(
         topic=topic,
@@ -75,6 +103,13 @@ def handler_metrics(path_metrics_collection, host_metrics_collection):
         "host_metrics_collection": host_metrics_collection,
         "path_metrics_collection": path_metrics_collection,
     }
+    return handler
+
+
+@pytest.fixture
+def handler_analytics(ip_reader, mocked_clickhouse):
+    handler = HandleAnalytics()
+    handler.services = {"ip_reader": ip_reader, "clickhouse_client": mocked_clickhouse}
     return handler
 
 
@@ -249,3 +284,48 @@ async def test_metrics_handler__update_metrics(
 
     assert path_metrics.tiny_urls == 1
     assert path_metrics.redirects == 1
+
+
+@pytest.mark.parametrize(
+    ("ip_address", "expected_location"),
+    (
+        pytest.param(None, "Unknown", id="No IP Address given in the record."),
+        pytest.param("207.23.240.87", "CA", id="A Canadian IP Address."),
+        pytest.param("207.226.217.15", "HK", id="A Hong Kong IP Address."),
+        pytest.param("192.168.1.15", "Unknown", id="A private IP address."),
+    ),
+)
+async def test_analytics_handler__ip_address(
+    test_url_model: URL,
+    handler_analytics,
+    mocked_clickhouse: MagicMock,
+    ip_address: str,
+    expected_location: str,
+):
+    record = await emit_message(
+        test_url_model,
+        handler_analytics,
+        "read",
+        additional_data={"ip_address": ip_address},
+    )
+
+    mocked_clickhouse.insert.assert_called_once()
+    mocked_clickhouse.insert.assert_called_with(
+        "analytics",
+        [
+            (
+                test_url_model.url.host,
+                str(test_url_model.url),
+                test_url_model.tiny_url,
+                kafka_timestamp_to_datetime(record.timestamp),
+                ip_address,
+                expected_location,
+                "Unknown",
+                "Unknown",
+                "Unknown",
+                False,
+                False,
+            )
+        ],
+        ANALYTICS_COLUMNS,
+    )

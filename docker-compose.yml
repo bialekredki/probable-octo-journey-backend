@@ -15,7 +15,7 @@ services:
 
   consumer:
     build: .
-    entrypoint: ["watchexec", "-r", "-e", "py", "--", "python", "invisible/consumers"]
+    entrypoint: ["watchexec", "-r", "-e", "py", "--", "python", "app/consumers"]
     volumes:
       - ${PWD}:/app
     networks:
@@ -106,6 +106,19 @@ services:
       - kafka
     networks:
       - internal
+
+  clickhouse:
+    image: bitnami/clickhouse:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 8084:8123
+    volumes:
+      - ${PWD}/clickhouse-config.xml:/bitnami/clickhouse/etc/conf.d/override.xml:ro
+    networks:
+      - internal
+
+      
 
 networks:
   internal:

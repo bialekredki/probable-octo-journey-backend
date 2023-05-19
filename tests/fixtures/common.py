@@ -5,9 +5,9 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockDatabase
 
-from invisible import initialize_application
-from invisible.app import TypedApp
-from invisible.models import URL
+from app import initialize_application
+from app.app import TypedApp
+from app.models import URL
 
 
 @pytest.fixture(scope="session")

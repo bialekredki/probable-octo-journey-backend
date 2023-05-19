@@ -5,8 +5,8 @@ from bson import ObjectId
 from nanoid import generate
 from pydantic import AnyHttpUrl, BaseConfig, BaseModel, Field, NonNegativeInt
 
-from invisible.app import TypedApp
-from invisible.types import TinyURL
+from app.app import TypedApp
+from app.types import TinyURL
 
 
 class PyObjectId(ObjectId):

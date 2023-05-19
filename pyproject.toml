@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "invisible"
+name = "shortify"
 version = "0.1.0"
 description = ""
 authors = ["oskar <oskarkorgul@gmail.com>"]
 readme = "README.md"
-packages = [{include = "invisible"}]
+packages = [{include = "app"}]
 
 
 [[tool.poetry.source]]
@@ -15,7 +15,7 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi-cbv = "^0.4.0"
+fastapi-cbv = "^0.4"
 hypercorn = "^0.14.3"
 aioredis = "^2.0.1"
 nanoid = "^2.0.0"
@@ -23,6 +23,9 @@ motor = "^3.1.2"
 orjson = "^3.8.10"
 aiokafka = "^0.8.0"
 aiorun = "^2022.11.1"
+clickhouse-connect = "^0.5.23"
+user-agents = "^2.2.0"
+geoip2 = "^4.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

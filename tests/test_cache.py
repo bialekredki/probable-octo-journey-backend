@@ -2,9 +2,9 @@ import orjson
 from fastapi import status
 from httpx import AsyncClient
 
-from invisible.app import TypedApp
-from invisible.models import URL
-from invisible.schemas import CreateTinyURL
+from app.app import TypedApp
+from app.models import URL
+from app.schemas import CreateTinyURL
 
 
 async def test_cache_is_refreshed_after_insert(

@@ -1,4 +1,4 @@
-from pymongo import ASCENDING, TEXT, HASHED
+from pymongo import ASCENDING, TEXT
 from pymongo.collation import (
     Collation,
     CollationAlternate,
@@ -6,8 +6,8 @@ from pymongo.collation import (
     CollationStrength,
 )
 
-from invisible.app import TypedApp
-from invisible.routes import bootstrap_routers
+from app.app import TypedApp
+from app.routes import bootstrap_routers
 
 
 def initialize_application():

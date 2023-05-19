@@ -5,8 +5,8 @@ from typing import Any, Callable, Iterable
 
 from aiokafka import AIOKafkaConsumer, ConsumerRecord
 
-from invisible.consumers.handlers import BaseHandler
-from invisible.consumers.middleware import BaseMiddleware
+from app.consumers.handlers import BaseHandler
+from app.consumers.middleware import BaseMiddleware
 
 
 class Consumer:
