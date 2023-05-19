@@ -292,7 +292,7 @@ test = ["anyio[trio] (>=3.2.1,<4.0.0)", "black (==22.10.0)", "coverage[toml] (>=
 
 [[package]]
 name = "fastapi-cbv"
-version = "0.4.0"
+version = "0.4.1"
 description = "Class based view for FastAPI services."
 category = "main"
 optional = false
@@ -889,7 +889,7 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "44a8ab39195e8327375a9896aa4fef724e85a344c30a8002d7d0d174e63fa7a9"
+content-hash = "7e24caf8a49a7daac2ba253f6841f74aabc6db33f33ca3c35168609185351777"
 
 [metadata.files]
 aiohttp = [
@@ -1361,8 +1361,8 @@ fastapi = [
     {file = "fastapi-0.92.0.tar.gz", hash = "sha256:023a0f5bd2c8b2609014d3bba1e14a1d7df96c6abea0a73070621c9862b9a4de"},
 ]
 fastapi-cbv = [
-    {file = "fastapi_cbv-0.4.0-py3-none-any.whl", hash = "sha256:13cd2b56ce227128685bd66fc51bf8b896c035bc9c8f39917f3c83bf35b22c8e"},
-    {file = "fastapi_cbv-0.4.0.tar.gz", hash = "sha256:56ce7e0d6ed9ffca7837b7b3b4c9ab4e31a3acc8a425b7769da9e3682c49e921"},
+    {file = "fastapi_cbv-0.4.1-py3-none-any.whl", hash = "sha256:b9305798d6863fee3d2f25cb38412265daa68bf385b8bb1e5f2aa5032861d2b3"},
+    {file = "fastapi_cbv-0.4.1.tar.gz", hash = "sha256:9f7a828b3cfc8ef5ffdc00aaba3f461862b78248ba97b8207dc21cad918d3a30"},
 ]
 frozenlist = [
     {file = "frozenlist-1.3.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:ff8bf625fe85e119553b5383ba0fb6aa3d0ec2ae980295aaefa552374926b3f4"},
